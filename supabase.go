@@ -9,12 +9,12 @@ import (
 
 const testDbName = "suspect_test"
 
-func ensureTooling(t *testing.T) {
-	require.NoError(t, createTestDb())
-	require.NoError(t, checkoutTestDb())
+func ensureTestEnvironment(t *testing.T) {
+	require.NoError(t, createTestDb(), "failed to create test database")
+	require.NoError(t, checkoutTestDb(), "failed to checkout test database")
 	t.Cleanup(func() {
-		assert.NoError(t, checkoutMainDb())
-		assert.NoError(t, deleteTestDb())
+		assert.NoError(t, checkoutMainDb(), "failed to checkout main database")
+		assert.NoError(t, deleteTestDb(), "failed to delete test database")
 	})
 }
 func createTestDb() error {
@@ -35,7 +35,5 @@ func deleteTestDb() error {
 
 func runCmd(arg ...string) error {
 	cmd := exec.Command("supabase", arg...)
-	// TODO: make pzth configurable
-	cmd.Dir = "../"
 	return cmd.Run()
 }

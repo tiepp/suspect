@@ -23,7 +23,7 @@ type Config struct {
 }
 
 func NewSuspect(t *testing.T, conf Config) *Suspect {
-	ensureTooling(t)
+	ensureTestEnvironment(t)
 
 	api := newApiClient(t, conf)
 	db := newDbConn(t, conf)

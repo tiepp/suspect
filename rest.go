@@ -23,14 +23,12 @@ func newApiClient(t *testing.T, conf Config) *httpexpect.Expect {
 	if conf.Debug {
 		printers = append(printers, httpexpect.NewDebugPrinter(t, true))
 	}
-
-	api := httpexpect.WithConfig(httpexpect.Config{
+	return httpexpect.WithConfig(httpexpect.Config{
 		BaseURL:  conf.ApiBaseUrl,
 		Client:   &http.Client{Jar: httpexpect.NewJar()},
 		Reporter: httpexpect.NewAssertReporter(t),
 		Printers: printers,
 	})
-	return api
 }
 
 func (s *Suspect) SignUp(cred UserCredentials) *Suspect {

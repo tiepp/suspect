@@ -22,4 +22,4 @@ TBD
 
 ## Credits
 
-Gopher mascot is based on original artwork from Renee French.
+Gopher mascot is based on original artwork by Renee French.

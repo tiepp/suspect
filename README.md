@@ -1,4 +1,4 @@
-<div style="text-align:center;"><img src="gopher_suspect.png" alt="gopher"></div>
+<div align="center"><img src="gopher_suspect.png" alt="gopher"></div>
 
 # Suspect
 
@@ -18,7 +18,7 @@ You need to have [Supabase CLI](https://github.com/supabase/cli) installed and [
 
 ## Usage
 
-TBD
+See [example](./example)
 
 ## Credits
 

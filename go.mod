@@ -3,6 +3,7 @@ module github.com/tiepp/suspect
 go 1.18
 
 require (
+	github.com/BurntSushi/toml v1.1.0
 	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/inbucket/inbucket v2.0.0+incompatible
 	github.com/jackc/pgconn v1.11.0

@@ -3,6 +3,7 @@ package suspect
 import (
 	"github.com/gavv/httpexpect/v2"
 	"net/http"
+	"strconv"
 	"testing"
 )
 
@@ -20,11 +21,10 @@ const apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1
 
 func newApiClient(t *testing.T, conf Config) *httpexpect.Expect {
 	printers := []httpexpect.Printer{httpexpect.NewCompactPrinter(t)}
-	if conf.Debug {
-		printers = append(printers, httpexpect.NewDebugPrinter(t, true))
-	}
+	printers = append(printers, httpexpect.NewDebugPrinter(t, true))
+
 	return httpexpect.WithConfig(httpexpect.Config{
-		BaseURL:  conf.ApiBaseUrl,
+		BaseURL:  "http://localhost:" + strconv.FormatUint(uint64(conf.Api.Port), 10),
 		Client:   &http.Client{Jar: httpexpect.NewJar()},
 		Reporter: httpexpect.NewAssertReporter(t),
 		Printers: printers,

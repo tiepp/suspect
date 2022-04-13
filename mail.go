@@ -3,13 +3,14 @@ package suspect
 import (
 	"github.com/inbucket/inbucket/pkg/rest/client"
 	"github.com/stretchr/testify/assert"
+	"strconv"
 	"testing"
 )
 
 const mailBoxName = "test"
 
 func newMailClient(t *testing.T, conf Config) *client.Client {
-	mail, err := client.New(conf.MailUrl)
+	mail, err := client.New("http://localhost:" + strconv.FormatUint(uint64(conf.Inbucket.Port), 10))
 	assert.NoError(t, err)
 	t.Cleanup(func() {
 		t.Log("Purge mailbox")

@@ -6,7 +6,7 @@ import (
 )
 
 func TestExample(t *testing.T) {
-	suspect.NewSuspect(t, suspect.Config{Debug: true}).
+	suspect.NewSuspect(t).
 		SignUp(suspect.UserCredentials{
 			Email:    "test@suspect.io",
 			Password: "P@ssw0rd"}).

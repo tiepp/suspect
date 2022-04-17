@@ -9,7 +9,7 @@ import (
 
 const mailBoxName = "test"
 
-func newMailClient(t *testing.T, conf Config) *client.Client {
+func newMailClient(t *testing.T, conf config) *client.Client {
 	mail, err := client.New("http://localhost:" + strconv.FormatUint(uint64(conf.Inbucket.Port), 10))
 	assert.NoError(t, err)
 	t.Cleanup(func() {
@@ -19,14 +19,7 @@ func newMailClient(t *testing.T, conf Config) *client.Client {
 	return mail
 }
 
-func (s *Suspect) LastEmailText() (text string) {
-	box, err := s.Mail.ListMailbox(mailBoxName)
-	if err == nil && len(box) > 0 {
-		message, _ := s.Mail.GetMessage(mailBoxName, box[0].ID)
-		text = message.Body.Text
-	}
-	assert.NoError(s.T, err)
-	assert.NotEmpty(s.T, text)
-
-	return
+func (s *Suspect) Mail(a func(*client.Client)) *Suspect {
+	a(s.mail)
+	return s
 }

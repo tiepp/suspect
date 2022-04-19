@@ -2,19 +2,16 @@ package suspect
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"os/exec"
 	"testing"
 )
 
-const testDbName = "suspect_test"
+const testDbName = "suspecttest"
 
 func ensureTestEnvironment(t *testing.T) {
-	require.NoError(t, createTestDb(), "failed to create test database")
-	require.NoError(t, checkoutTestDb(), "failed to checkout test database")
+	assert.NoError(t, startDb(), "failed to start test environment")
 	t.Cleanup(func() {
-		assert.NoError(t, checkoutMainDb(), "failed to checkout main database")
-		assert.NoError(t, deleteTestDb(), "failed to delete test database")
+		assert.NoError(t, stopDb(), "failed to stop test environment")
 	})
 }
 func createTestDb() error {
@@ -31,6 +28,18 @@ func checkoutMainDb() error {
 
 func deleteTestDb() error {
 	return runCmd("db", "branch", "delete", testDbName)
+}
+
+func resetTestDb() error {
+	return runCmd("db", "reset")
+}
+
+func stopDb() error {
+	return runCmd("stop")
+}
+
+func startDb() error {
+	return runCmd("start")
 }
 
 func runCmd(arg ...string) error {

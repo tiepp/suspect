@@ -43,9 +43,9 @@ func NewSuspect(t *testing.T) *Suspect {
 	return &Suspect{api, db, mail, t}
 }
 
-func (s *Suspect) Wait(dur int) *Suspect {
+func (s *Suspect) Wait(seconds int) *Suspect {
 	s.t.Helper()
-	s.t.Logf("Waiting for %d seconds", dur)
-	time.Sleep(time.Duration(dur) * time.Second)
+	s.t.Logf("Waiting for %d seconds", seconds)
+	time.Sleep(time.Duration(seconds) * time.Second)
 	return s
 }

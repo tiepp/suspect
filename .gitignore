@@ -17,3 +17,5 @@
 # Supabase
 **/supabase/.branches
 **/supabase/.temp
+
+.idea

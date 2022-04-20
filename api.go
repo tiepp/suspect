@@ -12,7 +12,7 @@ type UserCredentials struct {
 	Password string `json:"password"`
 }
 
-var cred = UserCredentials{
+var testCreds = UserCredentials{
 	Email:    "t@s.t",
 	Password: "12345678",
 }
@@ -22,14 +22,11 @@ var cred = UserCredentials{
 const apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24ifQ.625_WdcF3KHqz5amU0x2X5WWHP-OEs_4qj0ssLNHzTs"
 
 func newApiClient(t *testing.T, conf config) *httpexpect.Expect {
-	printers := []httpexpect.Printer{httpexpect.NewCompactPrinter(t)}
-	printers = append(printers, httpexpect.NewDebugPrinter(t, true))
-
 	return httpexpect.WithConfig(httpexpect.Config{
 		BaseURL:  "http://localhost:" + strconv.FormatUint(uint64(conf.Api.Port), 10),
 		Client:   &http.Client{Jar: httpexpect.NewJar()},
 		Reporter: httpexpect.NewAssertReporter(t),
-		Printers: printers,
+		Printers: []httpexpect.Printer{httpexpect.NewCompactPrinter(t), httpexpect.NewDebugPrinter(t, true)},
 	})
 }
 
@@ -41,7 +38,7 @@ func (s *Suspect) Api(a func(*httpexpect.Expect) *httpexpect.Expect) *Suspect {
 func AssertSignUp(api *httpexpect.Expect) *httpexpect.Expect {
 	r := api.POST("/auth/v1/signup").
 		WithQuery("apikey", apiKey).
-		WithJSON(cred).
+		WithJSON(testCreds).
 		Expect().
 		Status(http.StatusOK)
 	accessToken := r.JSON().Object().Value("access_token").String().Raw()

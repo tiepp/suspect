@@ -10,7 +10,7 @@ import (
 
 func newDbConn(t *testing.T, conf config) *pgx.Conn {
 	ctx := context.Background()
-	conn, err := pgx.Connect(ctx, "postgres://postgres:postgres@localhost:"+strconv.FormatUint(uint64(conf.Db.Port), 10)+"/postgres?sslmode=disable")
+	conn, err := pgx.Connect(ctx, "postgres://postgres:postgres@localhost:"+strconv.FormatUint(uint64(conf.Db.Port), 10)+"/postgres")
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, conn.Close(ctx))

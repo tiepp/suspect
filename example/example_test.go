@@ -12,8 +12,8 @@ import (
 )
 
 func TestExample(t *testing.T) {
-	var testId = 123
-	var testName = "John Doe"
+	testId := 123
+	testName := "Test Name"
 
 	suspect.NewSuspect(t).
 		Api(suspect.AssertSignUp).

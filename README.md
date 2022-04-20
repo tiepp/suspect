@@ -2,7 +2,7 @@
 
 # Suspect
 
-**Su**pabase **spec** **t**ools
+Supabase integration testing
 
 ## Goals
 

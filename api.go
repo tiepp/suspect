@@ -12,11 +12,6 @@ type UserCredentials struct {
 	Password string `json:"password"`
 }
 
-var testCreds = UserCredentials{
-	Email:    "t@s.t",
-	Password: "12345678",
-}
-
 // Taking advantage of fixed key. This is likely to break in the future.
 // https://github.com/supabase/cli/blob/7fa402cd5a95d6a83e32f82113de449656a080e2/internal/start/start.go#L77
 const apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24ifQ.625_WdcF3KHqz5amU0x2X5WWHP-OEs_4qj0ssLNHzTs"
@@ -35,18 +30,20 @@ func (s *Suspect) Api(a func(*httpexpect.Expect) *httpexpect.Expect) *Suspect {
 	return s
 }
 
-func AssertSignUp(api *httpexpect.Expect) *httpexpect.Expect {
-	r := api.POST("/auth/v1/signup").
-		WithQuery("apikey", apiKey).
-		WithJSON(testCreds).
-		Expect().
-		Status(http.StatusOK)
-	accessToken := r.JSON().Object().Value("access_token").String().Raw()
-	api = api.Builder(func(r *httpexpect.Request) {
-		r.WithQuery("apikey", apiKey)
-		r.WithHeader("Authorization", "Bearer "+accessToken)
-	})
-	return api
+func AssertSignUp(credentials UserCredentials) func(api *httpexpect.Expect) *httpexpect.Expect {
+	return func(api *httpexpect.Expect) *httpexpect.Expect {
+		r := api.POST("/auth/v1/signup").
+			WithQuery("apikey", apiKey).
+			WithJSON(credentials).
+			Expect().
+			Status(http.StatusOK)
+		accessToken := r.JSON().Object().Value("access_token").String().Raw()
+		api = api.Builder(func(r *httpexpect.Request) {
+			r.WithQuery("apikey", apiKey)
+			r.WithHeader("Authorization", "Bearer "+accessToken)
+		})
+		return api
+	}
 }
 
 func AssertSignOut(api *httpexpect.Expect) *httpexpect.Expect {

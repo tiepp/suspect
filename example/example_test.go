@@ -12,11 +12,15 @@ import (
 )
 
 func TestExample(t *testing.T) {
-	testId := 123
-	testName := "Test Name"
+	testCreds := suspect.UserCredentials{
+		Email:    "t@s.t",
+		Password: "12345678",
+	}
+	testProfileId := 123
+	testProfileName := "Test Name"
 
 	suspect.NewSuspect(t).
-		Api(suspect.AssertSignUp).
+		Api(suspect.AssertSignUp(testCreds)).
 		Mail(func(mail *client.Client) {
 			box, err := mail.ListMailbox("test")
 			assert.NoError(t, err)
@@ -25,7 +29,7 @@ func TestExample(t *testing.T) {
 		Api(suspect.AssertUser).
 		Api(func(api *httpexpect.Expect) *httpexpect.Expect {
 			api.POST("/rest/v1/profile").
-				WithJSON(map[string]interface{}{"id": testId, "name": testName}).
+				WithJSON(map[string]interface{}{"id": testProfileId, "name": testProfileName}).
 				Expect().
 				Status(http.StatusCreated)
 			return api
@@ -33,17 +37,17 @@ func TestExample(t *testing.T) {
 		Wait(1).
 		Db(func(db *pgx.Conn) {
 			var name string
-			err := db.QueryRow(context.Background(), "SELECT name FROM profile WHERE id = $1", testId).
+			err := db.QueryRow(context.Background(), "SELECT name FROM profile WHERE id = $1", testProfileId).
 				Scan(&name)
 			assert.NoError(t, err)
-			assert.EqualValues(t, testName, name)
+			assert.EqualValues(t, testProfileName, name)
 		}).
 		Api(func(api *httpexpect.Expect) *httpexpect.Expect {
 			api.GET("/rest/v1/profile").
 				Expect().Status(http.StatusOK).
 				JSON().Array().First().Object().
-				ValueEqual("id", testId).
-				ValueEqual("name", testName)
+				ValueEqual("id", testProfileId).
+				ValueEqual("name", testProfileName)
 			return api
 		}).
 		Api(suspect.AssertSignOut)

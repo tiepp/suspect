@@ -22,6 +22,8 @@ func newApiClient(t *testing.T, conf config) *httpexpect.Expect {
 		Client:   &http.Client{Jar: httpexpect.NewJar()},
 		Reporter: httpexpect.NewAssertReporter(t),
 		Printers: []httpexpect.Printer{httpexpect.NewCompactPrinter(t), httpexpect.NewDebugPrinter(t, true)},
+	}).Builder(func(r *httpexpect.Request) {
+		r.WithQuery("apikey", apiKey)
 	})
 }
 
@@ -33,13 +35,26 @@ func (s *Suspect) Api(a func(*httpexpect.Expect) *httpexpect.Expect) *Suspect {
 func AssertSignUp(credentials UserCredentials) func(api *httpexpect.Expect) *httpexpect.Expect {
 	return func(api *httpexpect.Expect) *httpexpect.Expect {
 		r := api.POST("/auth/v1/signup").
-			WithQuery("apikey", apiKey).
 			WithJSON(credentials).
 			Expect().
 			Status(http.StatusOK)
 		accessToken := r.JSON().Object().Value("access_token").String().Raw()
 		api = api.Builder(func(r *httpexpect.Request) {
-			r.WithQuery("apikey", apiKey)
+			r.WithHeader("Authorization", "Bearer "+accessToken)
+		})
+		return api
+	}
+}
+
+func AssertSignIn(credentials UserCredentials) func(api *httpexpect.Expect) *httpexpect.Expect {
+	return func(api *httpexpect.Expect) *httpexpect.Expect {
+		r := api.POST("/auth/v1/token").
+			WithQuery("grant_type", "password").
+			WithJSON(credentials).
+			Expect().
+			Status(http.StatusOK)
+		accessToken := r.JSON().Object().Value("access_token").String().Raw()
+		api = api.Builder(func(r *httpexpect.Request) {
 			r.WithHeader("Authorization", "Bearer "+accessToken)
 		})
 		return api
@@ -50,6 +65,7 @@ func AssertSignOut(api *httpexpect.Expect) *httpexpect.Expect {
 	api.POST("/auth/v1/logout").
 		Expect().
 		Status(http.StatusNoContent)
+
 	return api
 }
 

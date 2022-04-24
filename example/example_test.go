@@ -16,6 +16,10 @@ var (
 		Email:    "t@s.t",
 		Password: "12345678",
 	}
+	testCreds2 = suspect.UserCredentials{
+		Email:    "t2@s.t",
+		Password: "12345678",
+	}
 	testProfileId   = 123
 	testProfileName = "Test Name"
 )
@@ -65,4 +69,13 @@ func TestSignIn(t *testing.T) {
 		Api(suspect.AssertSignIn(testCreds)).
 		Api(suspect.AssertUser).
 		Api(suspect.AssertSignOut)
+}
+
+func TestSlice(t *testing.T) {
+	s1 := suspect.NewSuspect(t)
+	s2 := s1.Slice()
+	s1.Api(suspect.AssertSignUp(testCreds))
+	s2.Api(suspect.AssertSignUp(testCreds2))
+	s1.Api(suspect.AssertUser)
+	s2.Api(suspect.AssertUser)
 }

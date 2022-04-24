@@ -15,6 +15,7 @@ type Suspect struct {
 	db   *pgx.Conn
 	mail *inbucket.Client
 	t    *testing.T
+	conf config
 }
 
 type config struct {
@@ -40,7 +41,12 @@ func NewSuspect(t *testing.T) *Suspect {
 	db := newDbConn(t, conf)
 	mail := newMailClient(t, conf)
 
-	return &Suspect{api, db, mail, t}
+	return &Suspect{api, db, mail, t, conf}
+}
+
+func (s *Suspect) Slice() *Suspect {
+	api := newApiClient(s.t, s.conf)
+	return &Suspect{api, s.db, s.mail, s.t, s.conf}
 }
 
 func (s *Suspect) Wait(seconds int) *Suspect {
